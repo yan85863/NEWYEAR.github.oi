@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新年倒计时</title>
+  <style>
+    /* 保持原有样式不变 */
+    /* 前面的所有 CSS 样式保持不变 */
+    :root {
+      --primary-color: #f39c12;
+      --secondary-color: #e74c3c;
+      --accent-color: #3498db;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      margin: 0;
+      font-family: 'Ma Ying Hei HK', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      overflow: hidden;
+      animation: backgroundAnimation 15s infinite alternate;
+      color: #fff;
+      text-align: center;
+      position: relative;
+    }
+
+    @keyframes backgroundAnimation {
+      0% {
+        background: radial-gradient(circle at center, #1a2a6c, #b21f1f, #fdbb2d);
+      }
+      33% {
+        background: radial-gradient(circle at center, #0f0c29, #302b63, #24243e);
+      }
+      66% {
+        background: radial-gradient(circle at center, #232526, #414345);
+      }
+      100% {
+        background: radial-gradient(circle at center, #4b134f, #c94b4b);
+      }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      padding: 1.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      transform: translateY(0);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      width: 90%;
+      max-width: 600px;
+      margin: 1rem;
+    }
+
+    .container:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    header h1 {
+      font-size: clamp(2rem, 8vw, 4.5rem);
+      font-weight: bold;
+      margin: 0;
+      background: linear-gradient(45deg, #fff, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.3);
+      animation: titleFloat 3s ease-in-out infinite, titleGlow 2s ease-in-out infinite;
+      letter-spacing: 2px;
+    }
+
+    @keyframes titleFloat {
+      0%, 100% {
+        transform: translateY(0) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-15px) rotate(2deg);
+      }
+    }
+
+    @keyframes titleGlow {
+      0%, 100% {
+        filter: drop-shadow(0 0 20px rgba(243, 156, 18, 0.5));
+      }
+      50% {
+        filter: drop-shadow(0 0 40px rgba(243, 156, 18, 0.8));
+      }
+    }
+
+    header p {
+      font-size: clamp(1rem, 4vw, 1.8rem);
+      margin: 1rem 0;
+      opacity: 0.9;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(45deg, #fff, var(--accent-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: subtitlePulse 2s ease-in-out infinite;
+    }
+
+    @keyframes subtitlePulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .timer-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+      perspective: 1000px;
+    }
+
+    .time-block {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 1rem;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .time-block::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+      );
+      transform: rotate(45deg);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%) rotate(45deg);
+      }
+      100% {
+        transform: translateX(100%) rotate(45deg);
+      }
+    }
+
+    .time-block:hover {
+      transform: scale(1.1) rotateY(10deg);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .time-value {
+      font-size: clamp(1.5rem, 6vw, 3.5rem);
+      font-weight: bold;
+      background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+      animation: numberPulse 1s infinite alternate ease-in-out;
+      position: relative;
+    }
+
+    @keyframes numberPulse {
+      from {
+        transform: scale(1);
+        filter: brightness(1);
+      }
+      to {
+        transform: scale(1.1);
+        filter: brightness(1.2);
+      }
+    }
+
+    .time-label {
+      font-size: clamp(0.8rem, 3vw, 1.2rem);
+      color: #fff;
+      opacity: 0.9;
+      margin-top: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      position: relative;
+    }
+
+    .time-label::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 2px;
+      background: var(--primary-color);
+      transition: width 0.3s ease;
+    }
+
+    .time-block:hover .time-label::after {
+      width: 50px;
+    }
+
+    .celebration-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1000;
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+    }
+
+    .celebration-container.show {
+      opacity: 1;
+    }
+
+    .celebration-text {
+      font-size: clamp(2.5rem, 10vw, 6rem);
+      background: linear-gradient(45deg, #f1c40f, #e74c3c, #3498db, #2ecc71);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: celebrationGlow 2s infinite alternate;
+      white-space: nowrap;
+    }
+
+    @keyframes celebrationGlow {
+      from {
+        filter: drop-shadow(0 0 10px rgba(241, 196, 15, 0.5));
+        transform: scale(1) rotate(-2deg);
+      }
+      to {
+        filter: drop-shadow(0 0 30px rgba(241, 196, 15, 0.8));
+        transform: scale(1.05) rotate(2deg);
+      }
+    }
+
+    .wishes {
+      font-size: clamp(1rem, 4vw, 1.5rem);
+      margin-top: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s forwards;
+      background: linear-gradient(45deg, #fff, var(--accent-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      padding: 1rem;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    #starCanvas {
+      z-index: 0;
+    }
+
+    #snowCanvas {
+      z-index: 1;
+    }
+
+    #fireworks {
+      z-index: 2;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 1rem;
+        margin: 0.5rem;
+      }
+
+      .timer-container {
+        gap: 0.5rem;
+      }
+
+      .time-block {
+        padding: 0.8rem;
+      }
+
+      .time-block:hover {
+        transform: scale(1.05);
+      }
+
+      header h1 {
+        animation: none;
+      }
+
+      @keyframes titleFloat {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-5px);
+        }
+      }
+    }
+
+    @media (max-width: 360px) {
+      .timer-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+    .new-year-greeting {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  font-size: clamp(2rem, 10vw, 6rem);
+  font-weight: bold;
+  text-align: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: all 1s ease;
+  white-space: nowrap;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  animation: none;
+}
+
+.new-year-greeting.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  animation: greetingAnimation 4s ease-in-out infinite;
+}
+
+.new-year-greeting::before {
+  content: '2️⃣0️⃣2️⃣5️⃣';
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.5em;
+  opacity: 0;
+  animation: fadeInDown 1s forwards 0.5s;
+}
+
+.new-year-greeting::after {
+  content: '🎊 恭喜发财 🎊';
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.4em;
+  opacity: 0;
+  animation: fadeInUp 1s forwards 1s;
+}
+
+@keyframes greetingAnimation {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1) rotate(-1deg);
+    background: linear-gradient(45deg, #ff0000, #ff4d4d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.5));
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.1) rotate(1deg);
+    background: linear-gradient(45deg, #ffd700, #ffb300);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1) rotate(-1deg);
+    background: linear-gradient(45deg, #ff0000, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(255, 69, 0, 0.5));
+  }
+  75% {
+    transform: translate(-50%, -50%) scale(1.1) rotate(1deg);
+    background: linear-gradient(45deg, #ffd700, #ff0000);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* 添加闪光效果 */
+.new-year-greeting.show::before,
+.new-year-greeting.show::after {
+  animation: shimmerText 2s infinite;
+}
+
+@keyframes shimmerText {
+  0% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+  </style>
+</head>
+<body>
+  <canvas id="fireworks"></canvas>
+  
+  <div class="container">
+    <header>
+      <h1>2025新年倒计时</h1>
+      <p>12月31晚上有烟花看✨</p>
+    </header>
+    
+    <div class="timer-container">
+      <div class="time-block">
+        <div class="time-value" id="days">00</div>
+        <div class="time-label">天</div>
+      </div>
+      <div class="time-block">
+        <div class="time-value" id="hours">00</div>
+        <div class="time-label">时</div>
+      </div>
+      <div class="time-block">
+        <div class="time-value" id="minutes">00</div>
+        <div class="time-label">分</div>
+      </div>
+      <div class="time-block">
+        <div class="time-value" id="seconds">00</div>
+        <div class="time-label">秒</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="wishes" class="wishes"></div>
+  
+  <script>
+    // 设置目标日期为2025年1月1日00:00:00
+    const targetDate = new Date('2025-01-01T00:00:00');
+    let isCountdownComplete = false;
+
+    function updateCountdown() {
+      const now = new Date();
+      const timeRemaining = targetDate - now;
+
+      if (timeRemaining <= 0) {
+        document.querySelector('.timer-container').innerHTML = 
+          '<div class="celebration-text celebration-active">🎊 新年快乐！🎊</div>';
+        document.getElementById('wishes').innerHTML = '祝愿大家2025年事事顺遂！';
+        
+        if (!isCountdownComplete) {
+          isCountdownComplete = true;
+          startFireworks();
+        }
+        return;
+      }
+
+      const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+      document.getElementById('days').textContent = String(days).padStart(2, '0');
+      document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    }
+
+    class Particle {
+      constructor(x, y, hue) {
+        this.x = x;
+        this.y = y;
+        this.hue = hue;
+        this.lifespan = 1;
+        this.decay = Math.random() * 0.02 + 0.02;
+        
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 8 + 2;
+        this.vx = Math.cos(angle) * velocity;
+        this.vy = Math.sin(angle) * velocity;
+        
+        this.gravity = 0.2;
+        this.friction = 0.99;
+        this.size = Math.random() * 3 + 1;
+      }
+
+      update() {
+        this.vx *= this.friction;
+        this.vy *= this.friction;
+        this.vy += this.gravity;
+        
+        this.x += this.vx;
+        this.y += this.vy;
+        
+        this.lifespan -= this.decay;
+        return this.lifespan > 0;
+      }
+
+      draw(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${this.hue}, 100%, 60%, ${this.lifespan})`;
+        ctx.fill();
+      }
+    }
+
+    class Firework {
+      constructor(x, y, targetX, targetY) {
+        this.x = x;
+        this.y = y;
+        this.startX = x;
+        this.startY = y;
+        this.targetX = targetX;
+        this.targetY = targetY;
+        
+        this.distanceToTarget = Math.sqrt(
+          Math.pow(targetX - x, 2) + Math.pow(targetY - y, 2)
+        );
+        this.distanceTraveled = 0;
+        
+        this.angle = Math.atan2(targetY - y, targetX - x);
+        this.speed = 10;
+        this.acceleration = 1.05;
+        this.particles = [];
+        this.hue = Math.random() * 360;
+        this.isExploded = false;
+      }
+
+      update() {
+        if (this.isExploded) {
+          for (let i = this.particles.length - 1; i >= 0; i--) {
+            if (!this.particles[i].update()) {
+              this.particles.splice(i, 1);
+            }
+          }
+          return this.particles.length > 0;
+        }
+
+        this.speed *= this.acceleration;
+        
+        const vx = Math.cos(this.angle) * this.speed;
+        const vy = Math.sin(this.angle) * this.speed;
+        
+        this.distanceTraveled = Math.sqrt(
+          Math.pow(this.x - this.startX, 2) + Math.pow(this.y - this.startY, 2)
+        );
+
+        if (this.distanceTraveled >= this.distanceToTarget) {
+          this.explode();
+          return true;
+        }
+
+        this.x += vx;
+        this.y += vy;
+        return true;
+      }
+
+      explode() {
+        this.isExploded = true;
+        for (let i = 0; i < 100; i++) {
+          this.particles.push(new Particle(this.x, this.y, this.hue));
+        }
+      }
+
+      draw(ctx) {
+        if (this.isExploded) {
+          this.particles.forEach(particle => particle.draw(ctx));
+          return;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(this.x - Math.cos(this.angle) * 10, this.y - Math.sin(this.angle) * 10);
+        ctx.strokeStyle = `hsl(${this.hue}, 100%, 50%)`;
+        ctx.stroke();
+      }
+    }
+
+    function startFireworks() {
+      const canvas = document.getElementById('fireworks');
+      const ctx = canvas.getContext('2d');
+      const fireworks = [];
+      
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      function animate() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (Math.random() < 0.05) {
+          const startX = Math.random() * canvas.width;
+          const startY = canvas.height;
+          const targetX = Math.random() * canvas.width;
+          const targetY = Math.random() * (canvas.height * 0.6);
+          
+          fireworks.push(new Firework(startX, startY, targetX, targetY));
+        }
+
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+          if (!fireworks[i].update()) {
+            fireworks.splice(i, 1);
+          } else {
+            fireworks[i].draw(ctx);
+          }
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+
+    // 启动倒计时
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+  </script>
+</body>
+</html>
